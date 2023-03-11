@@ -3,10 +3,10 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { MessageHelper } from 'src/common/helpers/message.helper';
-import { ProductMapper } from '../domain/mappers/products.mapper';
-import { ProductRepository } from '../infra/db/repositories/products.repository';
-import { ProductDto } from '../infra/nestjs/dtos/products.dto';
+import { MessageHelper } from '../../../../common/helpers/message.helper';
+import { ProductMapper } from '../../domain/mappers/products.mapper';
+import { ProductRepository } from '../../infra/db/repositories/products.repository';
+import { ProductDto } from '../../infra/nestjs/dtos/products.dto';
 
 @Injectable()
 export class CreateProductUseCase {

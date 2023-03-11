@@ -1,6 +1,6 @@
 import { Controller, HttpStatus, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateProductUseCase } from 'src/modules/products/application/create-products.usecase';
+import { CreateProductUseCase } from './../../../application/create-products/create-products.usecase';
 import { ProductDto } from '../dtos/products.dto';
 
 @ApiTags('Products')
