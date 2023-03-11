@@ -31,4 +31,14 @@ export class ProductRepository {
 
     return queryBuilder.getMany();
   }
+
+  async findByExpire(): Promise<ProductEntity[]> {
+    const queryBuilder = this.orm.createQueryBuilder('products');
+
+    queryBuilder.where('products.daysExpiration != :daysExpiration', {
+      daysExpiration: 0,
+    });
+
+    return queryBuilder.getMany();
+  }
 }

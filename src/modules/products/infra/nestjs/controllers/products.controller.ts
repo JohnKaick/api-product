@@ -4,6 +4,7 @@ import { CreateProductUseCase } from './../../../application/create-products/cre
 import { ProductDto } from '../dtos/products.dto';
 import { GetAllProductUseCase } from './../../../application/get-all-products/get-all-products.usecase';
 import { GetAllExpiredProductUseCase } from './../../../application/get-all-expired-products/get-all-expired-products.usecase';
+import { GetAllExpireProductUseCase } from './../../../application/get-all-expire-products/get-all-expire-products.usecase';
 
 @ApiTags('Products')
 @Controller('products')
@@ -12,6 +13,7 @@ export class ProductController {
     private readonly createProductUseCase: CreateProductUseCase,
     private readonly getAllProductUseCase: GetAllProductUseCase,
     private readonly getAllExpiredProductUseCase: GetAllExpiredProductUseCase,
+    private readonly getAllExpireProductUseCase: GetAllExpireProductUseCase,
   ) {}
 
   @ApiOperation({
@@ -54,5 +56,19 @@ export class ProductController {
   @Get('/expired')
   async getAllExpired(): Promise<ProductDto[]> {
     return this.getAllExpiredProductUseCase.execute();
+  }
+
+  @ApiOperation({
+    summary: 'GetAllExpireProducts',
+    description: 'Get all products expire',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Registration was successfully obtained.',
+    type: [ProductDto],
+  })
+  @Get('/expire')
+  async getAllExpire(): Promise<ProductDto[]> {
+    return this.getAllExpireProductUseCase.execute();
   }
 }

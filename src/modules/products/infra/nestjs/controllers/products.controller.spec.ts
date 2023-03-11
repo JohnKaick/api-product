@@ -4,12 +4,14 @@ import { ProductDto } from '../dtos/products.dto';
 import { ProductController } from './products.controller';
 import { GetAllProductUseCase } from './../../../application/get-all-products/get-all-products.usecase';
 import { GetAllExpiredProductUseCase } from './../../../application/get-all-expired-products/get-all-expired-products.usecase';
+import { GetAllExpireProductUseCase } from './../../../application/get-all-expire-products/get-all-expire-products.usecase';
 
 describe('ProductController', () => {
   let productController: ProductController;
   let createProductUseCase: CreateProductUseCase;
   let getAllProductUseCase: GetAllProductUseCase;
   let getAllExpiredProductUseCase: GetAllExpiredProductUseCase;
+  let getAllExpireProductUseCase: GetAllExpireProductUseCase;
 
   const mockProductDto: ProductDto = {
     name: 'Product 1',
@@ -43,6 +45,12 @@ describe('ProductController', () => {
             execute: jest.fn(),
           },
         },
+        {
+          provide: GetAllExpireProductUseCase,
+          useValue: {
+            execute: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -53,6 +61,9 @@ describe('ProductController', () => {
       module.get<GetAllProductUseCase>(GetAllProductUseCase);
     getAllExpiredProductUseCase = module.get<GetAllExpiredProductUseCase>(
       GetAllExpiredProductUseCase,
+    );
+    getAllExpireProductUseCase = module.get<GetAllExpireProductUseCase>(
+      GetAllExpireProductUseCase,
     );
   });
 
@@ -102,8 +113,8 @@ describe('ProductController', () => {
     });
   });
 
-  describe('getAll', () => {
-    it('should get all products', async () => {
+  describe('getAllExpired', () => {
+    it('should get all products expired', async () => {
       const getAllProducts = [
         {
           id: 1,
@@ -123,6 +134,30 @@ describe('ProductController', () => {
 
       expect(response).toEqual(getAllProducts);
       expect(getAllExpiredProductUseCase.execute).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('getAllExpire', () => {
+    it('should get all products expire', async () => {
+      const getAllProducts = [
+        {
+          id: 1,
+          ...mockProductDto,
+        },
+        {
+          id: 2,
+          ...mockProductDto2,
+        },
+      ];
+
+      jest
+        .spyOn(getAllExpireProductUseCase, 'execute')
+        .mockResolvedValue(getAllProducts);
+
+      const response = await productController.getAllExpire();
+
+      expect(response).toEqual(getAllProducts);
+      expect(getAllExpireProductUseCase.execute).toHaveBeenCalledTimes(1);
     });
   });
 });

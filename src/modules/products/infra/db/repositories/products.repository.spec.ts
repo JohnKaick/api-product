@@ -47,7 +47,7 @@ describe('ProductRepository', () => {
   });
 
   describe('findAll', () => {
-    it('should create a new product', async () => {
+    it('should return an array of product', async () => {
       const expiredProducts = [new ProductEntity(), new ProductEntity()];
 
       jest.spyOn(orm, 'find').mockResolvedValue(expiredProducts);
@@ -71,6 +71,21 @@ describe('ProductRepository', () => {
       const result = await repository.findByExpired();
 
       expect(result).toEqual(expiredProducts);
+    });
+  });
+
+  describe('findByExpire', () => {
+    it('should return an array of expire products', async () => {
+      const expireProducts = [new ProductEntity(), new ProductEntity()];
+
+      jest.spyOn(orm, 'createQueryBuilder').mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(expireProducts),
+      } as any);
+
+      const result = await repository.findByExpire();
+
+      expect(result).toEqual(expireProducts);
     });
   });
 });
