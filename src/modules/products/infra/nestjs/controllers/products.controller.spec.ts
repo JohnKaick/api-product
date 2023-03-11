@@ -3,11 +3,13 @@ import { CreateProductUseCase } from './../../../application/create-products/cre
 import { ProductDto } from '../dtos/products.dto';
 import { ProductController } from './products.controller';
 import { GetAllProductUseCase } from './../../../application/get-all-products/get-all-products.usecase';
+import { GetAllExpiredProductUseCase } from './../../../application/get-all-expired-products/get-all-expired-products.usecase';
 
 describe('ProductController', () => {
   let productController: ProductController;
   let createProductUseCase: CreateProductUseCase;
   let getAllProductUseCase: GetAllProductUseCase;
+  let getAllExpiredProductUseCase: GetAllExpiredProductUseCase;
 
   const mockProductDto: ProductDto = {
     name: 'Product 1',
@@ -35,6 +37,12 @@ describe('ProductController', () => {
             execute: jest.fn(),
           },
         },
+        {
+          provide: GetAllExpiredProductUseCase,
+          useValue: {
+            execute: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -43,6 +51,9 @@ describe('ProductController', () => {
       module.get<CreateProductUseCase>(CreateProductUseCase);
     getAllProductUseCase =
       module.get<GetAllProductUseCase>(GetAllProductUseCase);
+    getAllExpiredProductUseCase = module.get<GetAllExpiredProductUseCase>(
+      GetAllExpiredProductUseCase,
+    );
   });
 
   afterEach(() => {
@@ -88,6 +99,30 @@ describe('ProductController', () => {
 
       expect(response).toEqual(getAllProducts);
       expect(getAllProductUseCase.execute).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('getAll', () => {
+    it('should get all products', async () => {
+      const getAllProducts = [
+        {
+          id: 1,
+          ...mockProductDto,
+        },
+        {
+          id: 2,
+          ...mockProductDto2,
+        },
+      ];
+
+      jest
+        .spyOn(getAllExpiredProductUseCase, 'execute')
+        .mockResolvedValue(getAllProducts);
+
+      const response = await productController.getAllExpired();
+
+      expect(response).toEqual(getAllProducts);
+      expect(getAllExpiredProductUseCase.execute).toHaveBeenCalledTimes(1);
     });
   });
 });

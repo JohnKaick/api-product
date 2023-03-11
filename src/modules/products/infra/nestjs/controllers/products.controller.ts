@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateProductUseCase } from './../../../application/create-products/create-products.usecase';
 import { ProductDto } from '../dtos/products.dto';
 import { GetAllProductUseCase } from './../../../application/get-all-products/get-all-products.usecase';
+import { GetAllExpiredProductUseCase } from './../../../application/get-all-expired-products/get-all-expired-products.usecase';
 
 @ApiTags('Products')
 @Controller('products')
@@ -10,6 +11,7 @@ export class ProductController {
   constructor(
     private readonly createProductUseCase: CreateProductUseCase,
     private readonly getAllProductUseCase: GetAllProductUseCase,
+    private readonly getAllExpiredProductUseCase: GetAllExpiredProductUseCase,
   ) {}
 
   @ApiOperation({
@@ -38,5 +40,19 @@ export class ProductController {
   @Get()
   async getAll(): Promise<ProductDto[]> {
     return this.getAllProductUseCase.execute();
+  }
+
+  @ApiOperation({
+    summary: 'GetAllExpiredProducts',
+    description: 'Get all products expired',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Registration was successfully obtained.',
+    type: [ProductDto],
+  })
+  @Get('/expired')
+  async getAllExpired(): Promise<ProductDto[]> {
+    return this.getAllExpiredProductUseCase.execute();
   }
 }
