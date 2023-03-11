@@ -1,16 +1,22 @@
-import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateProductUseCase } from './../../../application/create-products/create-products.usecase';
 import { ProductDto } from '../dtos/products.dto';
 import { ProductController } from './products.controller';
+import { GetAllProductUseCase } from './../../../application/get-all-products/get-all-products.usecase';
 
 describe('ProductController', () => {
   let productController: ProductController;
   let createProductUseCase: CreateProductUseCase;
+  let getAllProductUseCase: GetAllProductUseCase;
 
   const mockProductDto: ProductDto = {
-    name: 'Product Name',
+    name: 'Product 1',
     daysExpiration: 30,
+  };
+
+  const mockProductDto2: ProductDto = {
+    name: 'Product 2',
+    daysExpiration: 10,
   };
 
   beforeEach(async () => {
@@ -23,12 +29,20 @@ describe('ProductController', () => {
             execute: jest.fn(),
           },
         },
+        {
+          provide: GetAllProductUseCase,
+          useValue: {
+            execute: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     productController = module.get<ProductController>(ProductController);
     createProductUseCase =
       module.get<CreateProductUseCase>(CreateProductUseCase);
+    getAllProductUseCase =
+      module.get<GetAllProductUseCase>(GetAllProductUseCase);
   });
 
   afterEach(() => {
@@ -48,8 +62,32 @@ describe('ProductController', () => {
 
       const response = await productController.create(mockProductDto);
 
-      expect(createProductUseCase.execute).toHaveBeenCalledWith(mockProductDto);
       expect(response).toEqual(createdProduct);
+      expect(createProductUseCase.execute).toHaveBeenCalledWith(mockProductDto);
+    });
+  });
+
+  describe('getAll', () => {
+    it('should get all products', async () => {
+      const getAllProducts = [
+        {
+          id: 1,
+          ...mockProductDto,
+        },
+        {
+          id: 2,
+          ...mockProductDto2,
+        },
+      ];
+
+      jest
+        .spyOn(getAllProductUseCase, 'execute')
+        .mockResolvedValue(getAllProducts);
+
+      const response = await productController.getAll();
+
+      expect(response).toEqual(getAllProducts);
+      expect(getAllProductUseCase.execute).toHaveBeenCalledTimes(1);
     });
   });
 });

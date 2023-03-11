@@ -14,6 +14,14 @@ export class ProductRepository {
     return this.orm.save(product);
   }
 
+  async findAll(): Promise<ProductEntity[]> {
+    return this.orm.find({
+      order: {
+        name: 'ASC',
+      },
+    });
+  }
+
   async findByExpired(): Promise<ProductEntity[]> {
     const queryBuilder = this.orm.createQueryBuilder('products');
 

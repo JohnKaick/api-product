@@ -15,8 +15,9 @@ describe('ProductRepository', () => {
         {
           provide: getRepositoryToken(ProductEntity),
           useValue: {
-            createQueryBuilder: jest.fn(),
             save: jest.fn(),
+            find: jest.fn(),
+            createQueryBuilder: jest.fn(),
             getMany: jest.fn(),
           },
         },
@@ -42,6 +43,19 @@ describe('ProductRepository', () => {
 
       expect(result).toEqual(newProduct);
       expect(orm.save).toHaveBeenCalledWith(newProduct);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should create a new product', async () => {
+      const expiredProducts = [new ProductEntity(), new ProductEntity()];
+
+      jest.spyOn(orm, 'find').mockResolvedValue(expiredProducts);
+
+      const result = await repository.findAll();
+
+      expect(result).toEqual(expiredProducts);
+      expect(orm.find).toHaveBeenCalledTimes(1);
     });
   });
 
